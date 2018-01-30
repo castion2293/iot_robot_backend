@@ -16,3 +16,15 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::resource('total_status','RobotTotalStatusController', ['only' => [
+    'index', 'show', 'destroy'
+]]);
+
+Route::resource('alarm', 'RobotALarmLogsController', ['only' => [
+    'index', 'show', 'destroy'
+]]);
+
+Route::resource('status', 'RobotStatusController', ['only' => [
+    'index', 'show', 'destroy'
+]]);
