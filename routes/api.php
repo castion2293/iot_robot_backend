@@ -28,3 +28,12 @@ Route::resource('alarm', 'RobotALarmLogsController', ['only' => [
 Route::resource('status', 'RobotStatusController', ['only' => [
     'index', 'show', 'destroy'
 ]]);
+
+Route::get('/test', function () {
+    return response()->json([
+        'user' => [
+            'first_name' => 'Nick',
+            'Last_name' => 'Zhang'
+        ]
+    ]);
+});
