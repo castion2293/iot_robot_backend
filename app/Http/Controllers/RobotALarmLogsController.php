@@ -27,7 +27,7 @@ class RobotALarmLogsController extends Controller
      */
     public function index()
     {
-        $alarms = $this->transformer->transformCollection(RobotAlarmLogs::all());
+        $alarms = $this->transformer->transformCollection(RobotAlarmLogs::all())->pluck('0');
 
         return new RobotAlarmLogsCollection($alarms);
     }
@@ -63,7 +63,7 @@ class RobotALarmLogsController extends Controller
     {
         $alarm = $this->transformer->transformInstance(RobotAlarmLogs::find($id));
 
-        return new RobotAlarmLogsCollection($alarm);
+        return new RobotAlarmLogsCollection(collect($alarm[0]));
     }
 
     /**
