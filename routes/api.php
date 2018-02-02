@@ -13,27 +13,29 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+//Route::middleware('auth:api')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
+
+
+Route::post('login', 'API\PassportController@login');
+Route::post('register', 'API\PassportController@register');
+
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::get('logout', 'API\PassportController@logout');
+
+    Route::get('get-details', 'API\PassportController@getDetails');
+
+    Route::resource('total_status','RobotTotalStatusController', ['only' => [
+        'index', 'show', 'destroy'
+    ]]);
+
+    Route::resource('alarm', 'RobotALarmLogsController', ['only' => [
+        'index', 'show', 'destroy'
+    ]]);
+
+    Route::resource('status', 'RobotStatusController', ['only' => [
+        'index', 'show', 'destroy'
+    ]]);
 });
 
-Route::resource('total_status','RobotTotalStatusController', ['only' => [
-    'index', 'show', 'destroy'
-]]);
-
-Route::resource('alarm', 'RobotALarmLogsController', ['only' => [
-    'index', 'show', 'destroy'
-]]);
-
-Route::resource('status', 'RobotStatusController', ['only' => [
-    'index', 'show', 'destroy'
-]]);
-
-Route::get('/test', function () {
-    return response()->json([
-        'user' => [
-            'first_name' => 'Nick',
-            'Last_name' => 'Zhang'
-        ]
-    ]);
-});

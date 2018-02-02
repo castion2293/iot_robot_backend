@@ -54,7 +54,7 @@ class RobotTotalStatusTransformer implements TransformContract
             'DOUT_233_248' => $total_status['DOUT_233_248'],
             'DOUT_249_264' => $total_status['DOUT_249_264'],
 
-
+            'ID' => $attribute->payload['ID'],
             'DATETIME' => $attribute->payload['DATETIME']
         ]);
     }

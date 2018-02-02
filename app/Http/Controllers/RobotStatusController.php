@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\RobotTotalStatusCollection;
 use App\RobotStatus;
 use App\Transformers\RobotStatusTransformer;
+use Auth;
 use Illuminate\Http\Request;
 
 class RobotStatusController extends Controller
@@ -31,7 +32,13 @@ class RobotStatusController extends Controller
      */
     public function index()
     {
-        //
+        $serial_nums = Auth::user()->robots()->get()->pluck('serial_number');
+
+        $status = $serial_nums->map(function ($serial_num) {
+            return $this->robotStatusTransformer->transformInstance(RobotStatus::find($serial_num));
+        });
+
+        return new RobotTotalStatusCollection($status);
     }
 
     /**

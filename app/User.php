@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
@@ -27,7 +28,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  */
 class User extends Authenticatable
 {
-    use Notifiable;
+    use HasApiTokens, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -46,4 +47,13 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function authAccessToken(){
+        return $this->hasMany('\App\OauthAccessToken');
+    }
+
+    public function robots()
+    {
+        return $this->belongsToMany('App\Robot', 'user_robot');
+    }
 }

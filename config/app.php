@@ -170,6 +170,7 @@ return [
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         BaoPham\DynamoDb\DynamoDbServiceProvider::class,
         \Yish\Generators\GeneratorsServiceProvider::class,
+        Barryvdh\Cors\ServiceProvider::class,
 
         /*
          * Application Service Providers...

@@ -23,6 +23,7 @@ class RobotStatusTransformer implements TransformContract
             'MACHINE' => $status['MACHINE'],
             'STATUS' => $status['STATUS'],
 
+            'ID' => $attribute->payload['ID'],
             'DATETIME' => $attribute->payload['DATETIME']
         ]);
     }
