@@ -36,7 +36,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'photo'
     ];
 
     /**
@@ -52,8 +52,8 @@ class User extends Authenticatable
         return $this->hasMany('\App\OauthAccessToken');
     }
 
-    public function robots()
+    public function products()
     {
-        return $this->belongsToMany('App\Robot', 'user_robot');
+        return $this->belongsToMany('App\Product', 'user_product');
     }
 }

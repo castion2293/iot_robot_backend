@@ -18,6 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
+            $table->string('photo')->default('https://s3-ap-northeast-1.amazonaws.com/iot-robot-front-pics/web_pics/Users-User-Male-4-icon.png');
             $table->rememberToken();
             $table->timestamps();
         });

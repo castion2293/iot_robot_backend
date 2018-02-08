@@ -32,13 +32,18 @@ class RobotStatusController extends Controller
      */
     public function index()
     {
-        $serial_nums = Auth::user()->robots()->get()->pluck('serial_number');
+        $products = Auth::user()->products()->get();
 
-        $status = $serial_nums->map(function ($serial_num) {
-            return $this->robotStatusTransformer->transformInstance(RobotStatus::find($serial_num));
+        $statuses = $products->map(function ($product) {
+            $status = $this->robotStatusTransformer->transformInstance(RobotStatus::find($product->product_id));
+
+            $status->put('name', $product->name)
+                ->put('photo', $product->photo);
+
+            return $status;
         });
 
-        return new RobotTotalStatusCollection($status);
+        return new RobotTotalStatusCollection($statuses);
     }
 
     /**
@@ -71,6 +76,11 @@ class RobotStatusController extends Controller
     public function show($id)
     {
         $status = $this->robotStatusTransformer->transformInstance(RobotStatus::find((int)$id));
+
+        $product = Auth::user()->products->where('product_id', $id)->first();
+
+        $status->put('name', $product->name)
+            ->put('photo', $product->photo);
 
         return new RobotTotalStatusCollection($status);
     }

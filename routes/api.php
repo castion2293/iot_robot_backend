@@ -37,5 +37,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::resource('status', 'RobotStatusController', ['only' => [
         'index', 'show', 'destroy'
     ]]);
+
+    Route::resource('product', 'ProductController', ['except' => [
+        'create', 'store'
+    ]]);
 });
 

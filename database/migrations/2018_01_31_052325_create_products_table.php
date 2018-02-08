@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateRobotsTable extends Migration
+class CreateProductsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateRobotsTable extends Migration
      */
     public function up()
     {
-        Schema::create('robots', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('serial_number')->index()->unsigned();
-            $table->string('robot_type');
-            $table->string('controller_type');
+            $table->integer('product_id')->index()->unsigned();
+            $table->string('name');
+            $table->string('group')->nullable();
+            $table->string('photo')->default('https://s3-ap-northeast-1.amazonaws.com/iot-robot-front-pics/product_pics/tv800-243x300.png');
             $table->timestamps();
         });
     }
