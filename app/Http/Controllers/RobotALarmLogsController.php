@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\RobotAlarmLogsCollection;
 use App\RobotAlarmLogs;
 use App\Transformers\RobotAlarmLogsTransformer;
+use Auth;
 use Illuminate\Http\Request;
 
 class RobotALarmLogsController extends Controller
@@ -27,7 +28,8 @@ class RobotALarmLogsController extends Controller
      */
     public function index()
     {
-        $alarms = $this->transformer->transformCollection(RobotAlarmLogs::all())->pluck('0');
+
+        $alarms = RobotAlarmLogs::where('ROBOT_ID', (int)request('product_id'))->get();
 
         return new RobotAlarmLogsCollection($alarms);
     }
@@ -61,9 +63,10 @@ class RobotALarmLogsController extends Controller
      */
     public function show($id)
     {
-        $alarm = $this->transformer->transformInstance(RobotAlarmLogs::find($id));
 
-        return new RobotAlarmLogsCollection(collect($alarm[0]));
+        $alarm = RobotAlarmLogs::find($id);
+
+        return new RobotAlarmLogsCollection(collect($alarm));
     }
 
     /**
