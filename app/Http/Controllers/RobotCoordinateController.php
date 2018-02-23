@@ -2,33 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Alarm;
-use App\Http\Resources\RobotAlarmLogsCollection;
-use App\RobotAlarmLogs;
-use Auth;
+use App\Http\Resources\RobotCoordinateCollection;
+use App\RobotCoordinate;
+use App\Transformers\RobotCoordinateTransformer;
 use Illuminate\Http\Request;
 
-class RobotALarmLogsController extends Controller
+class RobotCoordinateController extends Controller
 {
+    /**
+     * @var RobotCoordinateTransformer
+     */
+    private $robotCoordinateTransformer;
 
-    public function __construct()
+    public function __construct(RobotCoordinateTransformer $robotCoordinateTransformer)
     {
-
+        $this->robotCoordinateTransformer = $robotCoordinateTransformer;
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @return RobotAlarmLogsCollection
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-
-        $alarms = RobotAlarmLogs::where('ROBOT_ID', (int)request('product_id'))->get();
-
-        //dd($alarms->sortBy('ALARM_NAME'));
-
-        return new RobotAlarmLogsCollection($alarms);
+        //
     }
 
     /**
@@ -60,17 +58,9 @@ class RobotALarmLogsController extends Controller
      */
     public function show($id)
     {
-        $alarm = RobotAlarmLogs::find($id);
-        $solution = Alarm::where('alarm_code', request('code'))->first();
+        $coordinate = $this->robotCoordinateTransformer->transformInstance(RobotCoordinate::find((int)$id));
 
-        $alarm = collect($alarm)->merge([
-            'description' => $solution->description,
-            'cause' => $solution->cause,
-            'remedy' => $solution->remedy,
-            'remarks' => $solution->remarks
-        ]);
-
-        return new RobotAlarmLogsCollection($alarm);
+        return new RobotCoordinateCollection($coordinate);
     }
 
     /**

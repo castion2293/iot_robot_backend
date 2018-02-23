@@ -13,6 +13,7 @@ use Validator;
 class PassportController extends Controller
 {
     public $successStatus = 200;
+    public $errorStatue = 401;
 
     /**
      * @return \Illuminate\Http\JsonResponse
@@ -31,7 +32,7 @@ class PassportController extends Controller
             return response()->json($success, $this->successStatus);
         }
         else {
-            return response()->json(['error' => 'Unauthorised', 401]);
+            return response()->json(['error' => '電子郵件/密碼 錯誤'], $this->errorStatue);
         }
     }
 

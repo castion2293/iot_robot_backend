@@ -38,6 +38,10 @@ Route::group(['middleware' => 'auth:api'], function () {
         'index', 'show', 'destroy'
     ]]);
 
+    Route::resource('coordinate', 'RobotCoordinateController', ['only' => [
+        'index', 'show', 'destroy'
+    ]]);
+
     Route::resource('product', 'ProductController', ['except' => [
         'create', 'store'
     ]]);
