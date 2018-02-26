@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\User;
 use Auth;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -20,14 +21,14 @@ class PassportController extends Controller
      */
     public function login()
     {
-        //return response()->json(['email' => request('email'), 'password' => request('password')]);
-
         if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
             $user = Auth::user();
-            $success['token'] = $user->createToken('MyApp')->accessToken;
+            $token_name = $user->name . Carbon::now();
+            $success['token'] = $user->createToken($token_name)->accessToken;
             $success['name'] = $user->name;
             $success['email'] = $user->email;
             $success['photo'] = $user->photo;
+            $success['token_name'] = $token_name;
 
             return response()->json($success, $this->successStatus);
         }
@@ -63,9 +64,9 @@ class PassportController extends Controller
         return response()->json($success, $this->successStatus);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        DB::table('oauth_access_tokens')->where('user_id', Auth::user()->id)->delete();
+        DB::table('oauth_access_tokens')->where('name', $request->token_name)->delete();
 
         return response()->json([], $this->successStatus);
     }
