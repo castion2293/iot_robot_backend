@@ -72,9 +72,10 @@ class PassportController extends Controller
 
     public function getDetails()
     {
-        $user = Auth::user();
-        $robot = $user->robots()->get()->first();
-
-        return response()->json(['user' => $user, 'robot' => $robot], $this->successStatus);
+//        $user = Auth::user();
+//        $robot = $user->robots()->get()->first();
+//
+//        return response()->json(['user' => $user, 'robot' => $robot], $this->successStatus);
+        return response()->json([''], $this->successStatus);
     }
 }

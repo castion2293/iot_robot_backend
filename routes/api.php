@@ -24,8 +24,6 @@ Route::post('register', 'API\PassportController@register');
 Route::group(['middleware' => 'auth:api'], function () {
     Route::get('logout', 'API\PassportController@logout');
 
-    Route::get('get-details', 'API\PassportController@getDetails');
-
     Route::resource('total_status','RobotTotalStatusController', ['only' => [
         'index', 'show', 'destroy'
     ]]);
@@ -46,4 +44,6 @@ Route::group(['middleware' => 'auth:api'], function () {
         'create', 'store'
     ]]);
 });
+
+Route::get('get-details', 'API\PassportController@getDetails');
 

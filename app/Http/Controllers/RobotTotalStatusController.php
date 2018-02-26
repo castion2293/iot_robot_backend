@@ -32,10 +32,10 @@ class RobotTotalStatusController extends Controller
      */
     public function index()
     {
-        $serial_nums = Auth::user()->robots()->get()->pluck('serial_number');
+        $product_ids = Auth::user()->products()->get()->pluck('product_id');
 
-        $total_Status = $serial_nums->map(function ($serial_num) {
-            return $this->robotTotalStatusTransformer->transformInstance(RobotTotalStatus::find($serial_num));
+        $total_Status = $product_ids->map(function ($product_id) {
+            return $this->robotTotalStatusTransformer->transformInstance(RobotTotalStatus::find((int)$product_id));
         });
 
         return new RobotTotalStatusCollection($total_Status);
