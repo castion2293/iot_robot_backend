@@ -18,7 +18,11 @@ class ProductController extends Controller
     {
         $products = Auth::user()->products()->get();
 
-        return new ProductCollection($products);
+        if(count($products)) {
+            return new ProductCollection($products);
+        }
+
+        return response()->json(['error' => '目前沒有註冊任何產品，請登出並與我們聯絡!'], 401);
     }
 
     /**

@@ -4,19 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\RobotCoordinateCollection;
 use App\RobotCoordinate;
+use App\Services\GateService;
 use App\Transformers\RobotCoordinateTransformer;
 use Illuminate\Http\Request;
 
 class RobotCoordinateController extends Controller
 {
-    /**
-     * @var RobotCoordinateTransformer
-     */
     private $robotCoordinateTransformer;
+    private $gateService;
 
-    public function __construct(RobotCoordinateTransformer $robotCoordinateTransformer)
+    public function __construct(RobotCoordinateTransformer $robotCoordinateTransformer, GateService $gateService)
     {
         $this->robotCoordinateTransformer = $robotCoordinateTransformer;
+        $this->gateService = $gateService;
     }
 
     /**
@@ -58,6 +58,8 @@ class RobotCoordinateController extends Controller
      */
     public function show($id)
     {
+        $this->gateService->userIdCheck($id);
+
         $coordinate = $this->robotCoordinateTransformer->transformInstance(RobotCoordinate::find((int)$id));
 
         return new RobotCoordinateCollection($coordinate);

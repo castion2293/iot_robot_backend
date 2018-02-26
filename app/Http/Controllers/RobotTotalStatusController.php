@@ -4,25 +4,25 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\RobotTotalStatusCollection;
 use App\RobotTotalStatus;
+use App\Services\GateService;
 use App\Transformers\RobotTotalStatusTransformer;
 use Auth;
 use Illuminate\Http\Request;
 
 class RobotTotalStatusController extends Controller
 {
-    /**
-     * @var RobotTotalStatusTransformer
-     */
     private $robotTotalStatusTransformer;
+    private $gateService;
 
     /**
      * RobotTotalStatusController constructor.
      * @param RobotTotalStatusTransformer $robotTotalStatusTransformer
      */
-    public function __construct(RobotTotalStatusTransformer $robotTotalStatusTransformer)
+    public function __construct(RobotTotalStatusTransformer $robotTotalStatusTransformer, GateService $gateService)
     {
 
         $this->robotTotalStatusTransformer = $robotTotalStatusTransformer;
+        $this->gateService = $gateService;
     }
 
     /**
@@ -70,6 +70,8 @@ class RobotTotalStatusController extends Controller
      */
     public function show($id)
     {
+        $this->gateService->userIdCheck($id);
+
         $total_Status = $this->robotTotalStatusTransformer->transformInstance(RobotTotalStatus::find((int)$id));
 
         return new RobotTotalStatusCollection($total_Status);

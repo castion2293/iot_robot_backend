@@ -5,15 +5,19 @@ namespace App\Http\Controllers;
 use App\Alarm;
 use App\Http\Resources\RobotAlarmLogsCollection;
 use App\RobotAlarmLogs;
+use App\Services\GateService;
 use Auth;
 use Illuminate\Http\Request;
 
 class RobotALarmLogsController extends Controller
 {
 
-    public function __construct()
+    private $gateService;
+
+    public function __construct(GateService $gateService)
     {
 
+        $this->gateService = $gateService;
     }
 
     /**
@@ -23,10 +27,9 @@ class RobotALarmLogsController extends Controller
      */
     public function index()
     {
+        $this->gateService->userIdCheck(request('product_id'));
 
         $alarms = RobotAlarmLogs::where('ROBOT_ID', (int)request('product_id'))->get();
-
-        //dd($alarms->sortBy('ALARM_NAME'));
 
         return new RobotAlarmLogsCollection($alarms);
     }

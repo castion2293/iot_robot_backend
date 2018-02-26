@@ -27,5 +27,11 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Passport::routes();
+
+        Gate::define('UserIDCheck', function ($user, $id) {
+            $foo = $user->products()->get()->where('product_id', $id);
+
+            return !! count($foo);
+        });
     }
 }
