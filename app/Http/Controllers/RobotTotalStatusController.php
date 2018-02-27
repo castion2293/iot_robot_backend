@@ -35,7 +35,7 @@ class RobotTotalStatusController extends Controller
         $product_ids = Auth::user()->products()->get()->pluck('product_id');
 
         $total_Status = $product_ids->map(function ($product_id) {
-            return $this->robotTotalStatusTransformer->transformInstance(RobotTotalStatus::find((int)$product_id));
+            return $this->robotTotalStatusTransformer->transformCollection(RobotTotalStatus::find((int)$product_id));
         });
 
         return new RobotTotalStatusCollection($total_Status);
@@ -72,7 +72,7 @@ class RobotTotalStatusController extends Controller
     {
         $this->gateService->userIdCheck($id);
 
-        $total_Status = $this->robotTotalStatusTransformer->transformInstance(RobotTotalStatus::find((int)$id));
+        $total_Status = $this->robotTotalStatusTransformer->transformCollection(RobotTotalStatus::find((int)$id));
 
         return new RobotTotalStatusCollection($total_Status);
     }
