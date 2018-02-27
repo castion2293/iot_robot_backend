@@ -2,15 +2,8 @@
 
 namespace App\Transformers;
 
-use Yish\Generators\Foundation\Transform\TransformContract;
-
-class RobotCoordinateTransformer implements TransformContract
+class RobotCoordinateTransformer
 {
-    public function transformCollection($attributes)
-    {
-
-    }
-
     public function transformInstance($attribute)
     {
         $coordinate = $attribute->payload['data'];

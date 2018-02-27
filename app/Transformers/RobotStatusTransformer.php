@@ -2,15 +2,8 @@
 
 namespace App\Transformers;
 
-use Yish\Generators\Foundation\Transform\TransformContract;
-
-class RobotStatusTransformer implements TransformContract
+class RobotStatusTransformer
 {
-    public function transformCollection($attributes)
-    {
-
-    }
-
     public function transformInstance($attribute)
     {
         $status = $attribute->payload['data'];

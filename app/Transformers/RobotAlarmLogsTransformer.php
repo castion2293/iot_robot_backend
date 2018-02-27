@@ -2,9 +2,7 @@
 
 namespace App\Transformers;
 
-use Yish\Generators\Foundation\Transform\TransformContract;
-
-class RobotAlarmLogsTransformer implements TransformContract
+class RobotAlarmLogsTransformer
 {
     public function transformCollection($attributes)
     {
