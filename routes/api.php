@@ -43,6 +43,13 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::resource('product', 'ProductController', ['except' => [
         'create', 'store'
     ]]);
+
+    Route::post('user/reset/profile', 'UserController@resetUserProfile');
+    Route::post('user/reset/password', 'UserController@resetUserPassword');
+    Route::post('user/reset/avatar', 'UserController@resetUserAvatar');
+    Route::resource('user', 'UserController', ['only' => [
+        'update'
+    ]]);
 });
 
 Route::get('get-details', 'API\PassportController@getDetails');

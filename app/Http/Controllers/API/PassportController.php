@@ -24,6 +24,7 @@ class PassportController extends Controller
         if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
             $user = Auth::user();
             $token_name = $user->name . Carbon::now();
+            $success['id'] = $user->id;
             $success['token'] = $user->createToken($token_name)->accessToken;
             $success['name'] = $user->name;
             $success['email'] = $user->email;
@@ -33,7 +34,7 @@ class PassportController extends Controller
             return response()->json($success, $this->successStatus);
         }
         else {
-            return response()->json(['error' => '電子郵件/密碼 錯誤'], $this->errorStatue);
+            return response()->json(['message' => '電子郵件/密碼 錯誤'], $this->errorStatue);
         }
     }
 
