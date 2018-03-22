@@ -17,7 +17,7 @@ class CreateProductsTable extends Migration
             $table->increments('id');
             $table->integer('product_id')->index()->unsigned();
             $table->string('name');
-            $table->string('group')->nullable();
+            $table->string('group')->default('未分類');
             $table->string('photo')->default('https://s3-ap-northeast-1.amazonaws.com/iot-robot-front-pics/product_pics/tv800-243x300.png');
             $table->timestamps();
         });

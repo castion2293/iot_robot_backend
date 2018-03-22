@@ -2,13 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductResetAvatarResquest;
+use App\Http\Requests\ProductResetProfileRequest;
 use App\Http\Resources\ProductCollection;
 use App\Product;
+use App\Services\GateService;
 use Auth;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Image;
+use Storage;
 
 class ProductController extends Controller
 {
+    private $gateService;
+
+    public function __construct(GateService $gateService)
+    {
+
+        $this->gateService = $gateService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -65,7 +79,9 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        //
+        $this->gateService->userIdCheck($product->product_id);
+
+        return $product;
     }
 
     /**
@@ -75,9 +91,16 @@ class ProductController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(ProductResetProfileRequest $request, Product $product)
     {
-        //
+        $this->gateService->userIdCheck($product->product_id);
+
+        $product->update([
+            'name' => $request->name,
+            'group' => $request->group
+        ]);
+
+        return $product;
     }
 
     /**
@@ -89,5 +112,26 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         //
+    }
+
+    public function resetProductAvatar(ProductResetAvatarResquest $request)
+    {
+        $imageData = $request->get('avatar');
+        $fileName = Carbon::now()->timestamp . '_' . uniqid() . '.' . explode('/', explode(':', substr($imageData, 0, strpos($imageData, ';')))[1])[1];
+        Storage::disk('s3')->put('/product_pics/'.$fileName, Image::make($imageData)->stream()->__toString(), 'public');
+
+        $product = Product::find($request->id);
+
+        if (!strpos($product->photo, 'default')) {
+            $leng = strlen('https://s3-ap-northeast-1.amazonaws.com/iot-robot-front-pics');
+            $oldpath = substr($product->photo, $leng);
+            Storage::disk('s3')->delete($oldpath);
+        }
+
+        $product->update([
+            'photo' => 'https://s3-ap-northeast-1.amazonaws.com/iot-robot-front-pics/product_pics/' . $fileName,
+        ]);
+
+        return $product;
     }
 }
