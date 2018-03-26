@@ -28,6 +28,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         'index', 'show', 'destroy'
     ]]);
 
+    //Route::post('alarm/export/pdf', 'PDFController@getAlarmLogsPDF');
     Route::resource('alarm', 'RobotALarmLogsController', ['only' => [
         'index', 'show', 'destroy'
     ]]);
@@ -54,4 +55,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 });
 
 Route::get('get-details', 'API\PassportController@getDetails');
+
+Route::post('alarm/export/pdf', 'PDFController@getAlarmLogsPDF');
+Route::post('alarm/export/excel', 'ExcelController@getAlarmLogsExcel');
 
