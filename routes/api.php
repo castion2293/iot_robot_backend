@@ -41,6 +41,8 @@ Route::group(['middleware' => 'auth:api'], function () {
         'index', 'show', 'destroy'
     ]]);
 
+    Route::get('product/customer/setting', 'ProductController@getProductCustomerSetting');
+    Route::post('product/customer/setting', 'ProductController@resetProductCustomerSetting');
     Route::post('product/reset/avatar', 'ProductController@resetProductAvatar');
     Route::resource('product', 'ProductController', ['except' => [
         'create', 'store'

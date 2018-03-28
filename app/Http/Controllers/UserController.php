@@ -6,6 +6,7 @@ use App\Http\Requests\UserResetAvatarRequest;
 use App\Http\Requests\UserResetPasswordRequest;
 use App\Http\Requests\UserResetProfileRequest;
 use App\User;
+use App\UserSetting;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -99,6 +100,14 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email
         ]);
+
+
+        // user setting for dynamoDB
+        $userSetting = UserSetting::find($user->id);
+
+        $userSetting->name = $user->name;
+        $userSetting->email = $user->email;
+        $userSetting->save();
 
         return $this->resetToken($user, $request->token_name);
     }

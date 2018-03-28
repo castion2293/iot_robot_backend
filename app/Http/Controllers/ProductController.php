@@ -114,6 +114,29 @@ class ProductController extends Controller
         //
     }
 
+    public function getProductCustomerSetting()
+    {
+        $this->gateService->userIdCheck(request('product_id'));
+
+        $productCustomerSetting = Product::where('product_id', request('product_id'))
+                                        ->first()
+                                        ->customerSettings()
+                                        ->first();
+
+        return $productCustomerSetting;
+    }
+
+    public function resetProductCustomerSetting(Request $request)
+    {
+        $product = Product::find(request('product_id'));
+
+        $this->gateService->userIdCheck($product->product_id);
+
+        $product->customerSettings->update($request->all());
+
+        return $product;
+    }
+
     public function resetProductAvatar(ProductResetAvatarResquest $request)
     {
         $imageData = $request->get('avatar');
