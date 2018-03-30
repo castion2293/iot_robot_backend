@@ -150,6 +150,53 @@ class UserController extends Controller
         return $this->resetToken($user, $request->token_name);
     }
 
+    public function getUserAlarmSetting()
+    {
+        $user = auth()->user();
+
+        // user setting for dynamoDB
+        $userSetting = UserSetting::find($user->id);
+
+        return response()->json([
+            'enable' => $userSetting->enable,
+            'level_1' => $userSetting->level_1,
+            'level_2' => $userSetting->level_2,
+            'level_4' => $userSetting->level_4,
+            'level_8' => $userSetting->level_8,
+        ]);
+    }
+
+    public function resetUserAlarmSetting(Request $request)
+    {
+        $request->validate([
+            'enable' => 'boolean',
+            'level_1' => 'boolean',
+            'level_2' => 'boolean',
+            'level_4' => 'boolean',
+            'level_8' => 'boolean'
+        ]);
+
+        $user = auth()->user();
+
+        // user setting for dynamoDB
+        $userSetting = UserSetting::find($user->id);
+
+        $userSetting->enable = $request->enable;
+        $userSetting->level_1 = $request->level_1;
+        $userSetting->level_2 = $request->level_2;
+        $userSetting->level_4 = $request->level_4;
+        $userSetting->level_8 = $request->level_8;
+        $userSetting->save();
+
+        return response()->json([
+            'enable' => $userSetting->enable,
+            'level_1' => $userSetting->level_1,
+            'level_2' => $userSetting->level_2,
+            'level_4' => $userSetting->level_4,
+            'level_8' => $userSetting->level_8,
+        ]);
+    }
+
     private function resetToken($user, $tokenName)
     {
         DB::table('oauth_access_tokens')->where('name', $tokenName)->delete();

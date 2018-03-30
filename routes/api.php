@@ -48,9 +48,14 @@ Route::group(['middleware' => 'auth:api'], function () {
         'create', 'store'
     ]]);
 
+    Route::get('throughput/ok', 'throughputController@getThroughputForOK');
+    Route::get('throughput/ng', 'throughputController@getThroughputForNG');
+
     Route::post('user/reset/profile', 'UserController@resetUserProfile');
     Route::post('user/reset/password', 'UserController@resetUserPassword');
     Route::post('user/reset/avatar', 'UserController@resetUserAvatar');
+    Route::get('/user/alarm/setting', 'UserController@getUserAlarmSetting');
+    Route::post('/user/alarm/setting', 'UserController@resetUserAlarmSetting');
     Route::resource('user', 'UserController', ['only' => [
         'update'
     ]]);
