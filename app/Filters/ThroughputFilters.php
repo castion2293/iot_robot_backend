@@ -9,6 +9,8 @@
 namespace App\Filters;
 
 
+use Carbon\Carbon;
+
 class ThroughputFilters extends QueryFilter
 {
     public function product_id($product_id)
@@ -18,6 +20,22 @@ class ThroughputFilters extends QueryFilter
 
     public function today($today)
     {
-        return $this->builder->where('DATE', $today);
+        $date = Carbon::parse($today);
+
+        return $this->builder->where('DATE', substr($date, 0, 10));
     }
+
+    public function two_week($today)
+    {
+        $date = Carbon::parse($today);
+        $dates = [];
+        array_push($dates, substr($date, 0, 10));
+
+        for ($i = 0; $i < 13; $i++) {
+            array_push($dates, substr($date->subDay(1), 0, 10));
+        }
+
+        return $this->builder->wherein('DATE', $dates);
+    }
+
 }

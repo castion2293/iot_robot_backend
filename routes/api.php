@@ -48,8 +48,8 @@ Route::group(['middleware' => 'auth:api'], function () {
         'create', 'store'
     ]]);
 
-    Route::get('throughput/ok', 'throughputController@getThroughputForOK');
-    Route::get('throughput/ng', 'throughputController@getThroughputForNG');
+    Route::get('throughput/daily', 'throughputController@getDailyThroughput');
+    Route::get('throughput/cumulate', 'throughputController@getCumulateThroughput');
 
     Route::post('user/reset/profile', 'UserController@resetUserProfile');
     Route::post('user/reset/password', 'UserController@resetUserPassword');
@@ -61,8 +61,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     ]]);
 });
 
-Route::get('get-details', 'API\PassportController@getDetails');
-
 Route::post('alarm/export/pdf', 'PDFController@getAlarmLogsPDF');
 Route::post('alarm/export/excel', 'ExcelController@getAlarmLogsExcel');
+
 
