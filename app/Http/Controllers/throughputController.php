@@ -63,8 +63,6 @@ class throughputController extends Controller
         }
 
         return null;
-
-
     }
 
     public function getCumulateThroughput(ThroughputFilters $filters)

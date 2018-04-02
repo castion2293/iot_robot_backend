@@ -63,7 +63,10 @@ Route::group(['middleware' => 'auth:api'], function () {
 });
 
 Route::post('alarm/export/pdf', 'PDFController@getAlarmLogsPDF');
+Route::post('monthlythroughput/export/pdf', 'PDFController@getMonthlyThroughputPDF');
+
 Route::post('alarm/export/excel', 'ExcelController@getAlarmLogsExcel');
+Route::post('monthlythroughput/export/excel', 'ExcelController@getMonthlyThroughputExcel');
 
 
 
