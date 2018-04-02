@@ -49,6 +49,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     ]]);
 
     Route::get('throughput/daily', 'throughputController@getDailyThroughput');
+    Route::get('throughput/monthly', 'throughputController@getMonthlyThroughput');
     Route::get('throughput/cumulate', 'throughputController@getCumulateThroughput');
 
     Route::post('user/reset/profile', 'UserController@resetUserProfile');
@@ -63,5 +64,6 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 Route::post('alarm/export/pdf', 'PDFController@getAlarmLogsPDF');
 Route::post('alarm/export/excel', 'ExcelController@getAlarmLogsExcel');
+
 
 

@@ -22,20 +22,32 @@ class ThroughputFilters extends QueryFilter
     {
         $date = Carbon::parse($today);
 
-        return $this->builder->where('DATE', substr($date, 0, 10));
+        return $this->builder->where('DATE', $date->toDateString());
     }
 
     public function two_week($today)
     {
         $date = Carbon::parse($today);
         $dates = [];
-        array_push($dates, substr($date, 0, 10));
+        array_push($dates, $date->toDateString());
 
         for ($i = 0; $i < 13; $i++) {
-            array_push($dates, substr($date->subDay(1), 0, 10));
+            array_push($dates, $date->subDay()->toDateString());
         }
 
         return $this->builder->wherein('DATE', $dates);
     }
 
+    public function monthly($month)
+    {
+        $date = Carbon::parse($month);
+        $dates = [];
+        array_push($dates, $date->toDateString());
+
+        for ($i = 0; $i < $date->daysInMonth - 1; $i++) {
+            array_push($dates, $date->addDay()->toDateString());
+        }
+
+        return $this->builder->wherein('DATE', $dates);
+    }
 }

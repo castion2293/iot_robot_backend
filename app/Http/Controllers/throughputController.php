@@ -32,6 +32,41 @@ class throughputController extends Controller
         return null;
     }
 
+    public function getMonthlyThroughput(ThroughputFilters $filters)
+    {
+        $throughputForOK = ThroughputForOK::filter($filters)->get();
+        $throughputForNG = ThroughputForNG::filter($filters)->get();
+
+        if (!!count($throughputForOK) && !!count($throughputForNG)) {
+            $throughputs = $throughputForOK->map(function ($item) use ($throughputForNG) {
+                return [
+                    'product_id' => $item->PRODUCT_ID,
+                    'date' => $item->DATE,
+                    'OK_Throughput' => $item->NUMBER,
+                    'NG_Throughput' => $throughputForNG->filter(function ($e) use ($item) {
+                        return $e->DATE == $item->DATE;
+                    })->first()->NUMBER,
+                ];
+            });
+
+            $total_OK = $throughputs->sum('OK_Throughput');
+            $total_NG = $throughputs->sum('NG_Throughput');
+            $rate = round($total_OK / ($total_OK + $total_NG) * 100);
+
+
+            return response()->json([
+                'items' => $throughputs,
+                'total_ok' => $total_OK,
+                'total_ng' => $total_NG,
+                'rate' => $rate
+            ]);
+        }
+
+        return null;
+
+
+    }
+
     public function getCumulateThroughput(ThroughputFilters $filters)
     {
         $throughputForOK = ThroughputForOK::filter($filters)->get();
