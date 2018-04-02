@@ -3,13 +3,12 @@
  * Created by PhpStorm.
  * User: robotech
  * Date: 2018/4/2
- * Time: 下午 02:09
+ * Time: 下午 03:21
  */
 
 namespace App\Http\Exports;
 
 
-use App\Filters\ThroughputFilters;
 use App\ThroughputForNG;
 use App\ThroughputForOK;
 use Carbon\Carbon;
@@ -19,7 +18,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class MonthlyThroughputExport implements FromCollection, ShouldQueue, WithHeadings, WithMapping
+class CumulateThroughputExport implements FromCollection, ShouldQueue, WithHeadings, WithMapping
 {
     use Exportable;
 

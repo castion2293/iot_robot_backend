@@ -40,13 +40,15 @@ class PDFController extends Controller
         if (!!count($throughputForOK) && !!count($throughputForNG)) {
             $throughputs = $throughputForOK->map(function ($item) use ($throughputForNG) {
                 return [
-                    'product_id' => $item->PRODUCT_ID,
-                    'date' => $item->DATE,
-                    'OK_Throughput' => $item->NUMBER,
-                    'NG_Throughput' => $throughputForNG->filter(function ($e) use ($item) {
-                        return $e->DATE == $item->DATE;
-                    })->first()->NUMBER,
-                ];
+                        'product_id' => $item->PRODUCT_ID,
+                        'date' => $item->DATE,
+                        'OK_Throughput' => $item->NUMBER,
+                        'NG_Throughput' => $throughputForNG->filter(function ($e) use ($item) {
+                            return $e->DATE == $item->DATE;
+                        })->first()->NUMBER,
+                    ];
+                })->sortByDesc(function ($throughput, $key) {
+                    return Carbon::parse($throughput['date']);
             });
 
             $total_OK = $throughputs->sum('OK_Throughput');
@@ -60,6 +62,41 @@ class PDFController extends Controller
                 'rate' => $rate
             ]);
             return $pdf->download('MonthlyThroughputPDF.pdf');
+        }
+
+        return null;
+    }
+
+    public function getCumulateThroughputPDF(ThroughputFilters $filters)
+    {
+        $throughputForOK = ThroughputForOK::filter($filters)->get();
+        $throughputForNG = ThroughputForNG::filter($filters)->get();
+
+        if (!!count($throughputForOK) && !!count($throughputForNG)) {
+            $throughputs = $throughputForOK->map(function ($item) use ($throughputForNG) {
+                return [
+                        'product_id' => $item->PRODUCT_ID,
+                        'date' => $item->DATE,
+                        'OK_Throughput' => $item->NUMBER,
+                        'NG_Throughput' => $throughputForNG->filter(function ($e) use ($item) {
+                            return $e->DATE == $item->DATE;
+                        })->first()->NUMBER,
+                    ];
+                })->sortByDesc(function ($throughput, $key) {
+                    return Carbon::parse($throughput['date']);
+            });
+
+            $total_OK = $throughputs->sum('OK_Throughput');
+            $total_NG = $throughputs->sum('NG_Throughput');
+            $rate = round($total_OK / ($total_OK + $total_NG) * 100);
+
+            $pdf = PDF::loadView('pdf.CumulateThroughput', [
+                'throughputs' => $throughputs,
+                'total_ok' => $total_OK,
+                'total_ng' => $total_NG,
+                'rate' => $rate
+            ]);
+            return $pdf->download('CumulateThroughputPDF.pdf');
         }
 
         return null;

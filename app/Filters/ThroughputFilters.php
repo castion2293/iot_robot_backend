@@ -25,14 +25,18 @@ class ThroughputFilters extends QueryFilter
         return $this->builder->where('DATE', $date->toDateString());
     }
 
-    public function two_week($today)
+    public function interval($interval)
     {
-        $date = Carbon::parse($today);
-        $dates = [];
-        array_push($dates, $date->toDateString());
+        $start_end = explode('/', $interval);
 
-        for ($i = 0; $i < 13; $i++) {
-            array_push($dates, $date->subDay()->toDateString());
+        $first = Carbon::parse($start_end[0]);
+        $end = Carbon::parse($start_end[1]);
+
+        $dates = [];
+        array_push($dates, $end->toDateString());
+
+        for ($i = 0; $i < $first->diffInDays($end); $i++) {
+            array_push($dates, $end->subDay()->toDateString());
         }
 
         return $this->builder->wherein('DATE', $dates);
