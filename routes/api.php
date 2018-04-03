@@ -28,7 +28,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         'index', 'show', 'destroy'
     ]]);
 
-    //Route::post('alarm/export/pdf', 'PDFController@getAlarmLogsPDF');
+    Route::post('alarm/export/pdf', 'PDFController@getAlarmLogsPDF');
     Route::resource('alarm', 'RobotALarmLogsController', ['only' => [
         'index', 'show', 'destroy'
     ]]);
@@ -69,6 +69,3 @@ Route::post('cumulatethroughput/export/pdf', 'PDFController@getCumulateThroughpu
 Route::post('alarm/export/excel', 'ExcelController@getAlarmLogsExcel');
 Route::post('monthlythroughput/export/excel', 'ExcelController@getMonthlyThroughputExcel');
 Route::post('cumulatethroughput/export/excel', 'ExcelController@getCumulateThroughputExcel');
-
-
-

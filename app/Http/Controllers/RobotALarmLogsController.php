@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Alarm;
+use App\Filters\AlarmFilters;
 use App\Http\Resources\RobotAlarmLogsCollection;
 use App\RobotAlarmLogs;
 use App\Services\GateService;
@@ -25,11 +26,13 @@ class RobotALarmLogsController extends Controller
      *
      * @return RobotAlarmLogsCollection
      */
-    public function index()
+    public function index(AlarmFilters $filters)
     {
         $this->gateService->userIdCheck(request('product_id'));
 
-        $alarms = RobotAlarmLogs::where('ROBOT_ID', (int)request('product_id'))->get();
+        $alarms = RobotAlarmLogs::filter($filters)->get();
+
+        //$alarms = RobotAlarmLogs::where('ROBOT_ID', (int)request('product_id'))->get();
 
         return new RobotAlarmLogsCollection($alarms);
     }

@@ -32,12 +32,15 @@ class ThroughputFilters extends QueryFilter
         $first = Carbon::parse($start_end[0]);
         $end = Carbon::parse($start_end[1]);
 
+        $inv = $first->diffInDays($end);
+
         $dates = [];
         array_push($dates, $end->toDateString());
 
-        for ($i = 0; $i < $first->diffInDays($end); $i++) {
+        for ($i = 0; $i < $inv; $i++) {
             array_push($dates, $end->subDay()->toDateString());
         }
+
 
         return $this->builder->wherein('DATE', $dates);
     }
