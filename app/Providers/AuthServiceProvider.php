@@ -15,6 +15,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         'App\Model' => 'App\Policies\ModelPolicy',
+        'App\User' => 'App\Policies\UserIDCheckPolicy'
     ];
 
     /**
@@ -28,10 +29,7 @@ class AuthServiceProvider extends ServiceProvider
 
         Passport::routes();
 
-        Gate::define('UserIDCheck', function ($user, $id) {
-            $foo = $user->products()->get()->where('product_id', $id);
-
-            return !! count($foo);
-        });
+        Gate::define('UserIDCheck', 'App\Policies\UserIDCheckPolicy@UserIDCheck');
+        Gate::define('UserIDCheckForSpecific', 'App\Policies\UserIDCheckPolicy@UserIDCheckForSpecific');
     }
 }

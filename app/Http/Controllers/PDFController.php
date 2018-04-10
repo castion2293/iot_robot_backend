@@ -15,13 +15,15 @@ class PDFController extends Controller
 {
     private $gateService;
 
-    public function getAlarmLogsPDF(GateService $gateService)
+    public function __construct(GateService $gateService)
     {
-//        dd(request('product_id'));
+        $this->gateService = $gateService;
+    }
 
-//        $this->gateService = $gateService;
-//
-//        $this->gateService->userIdCheck(request('product_id'));
+    public function getAlarmLogsPDF()
+    {
+        $this->gateService->userIdCheckForSpecific(request('user_id'), request('product_id'));
+
         $alarms = RobotAlarmLogs::where('ROBOT_ID', (int)request('product_id'))->orderBy('DATETIME')->get();
 
         $alarms = $alarms->sortByDesc(function ($alarm, $key) {
@@ -34,6 +36,8 @@ class PDFController extends Controller
 
     public function getMonthlyThroughputPDF(ThroughputFilters $filters)
     {
+        $this->gateService->userIdCheckForSpecific(request('user_id'), request('product_id'));
+
         $throughputForOK = ThroughputForOK::filter($filters)->get();
         $throughputForNG = ThroughputForNG::filter($filters)->get();
 
@@ -69,6 +73,8 @@ class PDFController extends Controller
 
     public function getCumulateThroughputPDF(ThroughputFilters $filters)
     {
+        $this->gateService->userIdCheckForSpecific(request('user_id'), request('product_id'));
+
         $throughputForOK = ThroughputForOK::filter($filters)->get();
         $throughputForNG = ThroughputForNG::filter($filters)->get();
 
