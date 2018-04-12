@@ -26,14 +26,12 @@
         <th>日期</th>
         <th>良品</th>
         <th>不量品</th>
-        <th>產品編號</th>
     </tr>
     @foreach ($throughputs as $throughput)
         <tr>
             <td>{{ $throughput['date'] }}</td>
-            <td>{{ $throughput['OK_Throughput'] }}</td>
-            <td>{{ $throughput['NG_Throughput'] }}</td>
-            <td>{{ $throughput['product_id'] }}</td>
+            <td>{{ ($throughput['OK_Throughput']->first()) ?? 0 }}</td>
+            <td>{{ $throughput['NG_Throughput']->first() ?? 0 }}</td>
         </tr>
     @endforeach
 </table>

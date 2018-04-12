@@ -41,22 +41,42 @@ class PDFController extends Controller
         $throughputForOK = ThroughputForOK::filter($filters)->get();
         $throughputForNG = ThroughputForNG::filter($filters)->get();
 
-        if (!!count($throughputForOK) && !!count($throughputForNG)) {
-            $throughputs = $throughputForOK->map(function ($item) use ($throughputForNG) {
+        if (!!count($throughputForOK) || !!count($throughputForNG)) {
+            $OKthroughputs = $throughputForOK->map(function ($item) {
                 return [
-                        'product_id' => $item->PRODUCT_ID,
-                        'date' => $item->DATE,
-                        'OK_Throughput' => $item->NUMBER,
-                        'NG_Throughput' => $throughputForNG->filter(function ($e) use ($item) {
-                            return $e->DATE == $item->DATE;
-                        })->first()->NUMBER,
-                    ];
-                })->sortByDesc(function ($throughput, $key) {
-                    return Carbon::parse($throughput['date']);
+                    'product_id' => $item->PRODUCT_ID,
+                    'date' => $item->DATE,
+                    'OK_Throughput' => $item->NUMBER,
+                ];
             });
 
-            $total_OK = $throughputs->sum('OK_Throughput');
-            $total_NG = $throughputs->sum('NG_Throughput');
+            $NGthroughputs = $throughputForNG->map(function ($item) {
+                return [
+                    'product_id' => $item->PRODUCT_ID,
+                    'date' => $item->DATE,
+                    'NG_Throughput' => $item->NUMBER,
+                ];
+            });
+
+            $date_ok = $OKthroughputs->pluck('date');
+            $date_ng = $NGthroughputs->pluck('date');
+
+            $dates = $date_ok->merge($date_ng)->unique();
+
+            $throughputs = $dates->map(function ($date) use ($OKthroughputs, $NGthroughputs) {
+                return [
+                    'date' => $date,
+                    'OK_Throughput' => $OKthroughputs->filter(function ($OKthroughput) use ($date) {
+                            return $OKthroughput['date'] == $date;
+                        })->pluck('OK_Throughput'),
+                    'NG_Throughput' => $NGthroughputs->filter(function ($NGthroughput) use ($date) {
+                            return $NGthroughput['date'] == $date;
+                        })->pluck('NG_Throughput'),
+                ];
+            });
+
+            $total_OK = $OKthroughputs->sum('OK_Throughput');
+            $total_NG = $NGthroughputs->sum('NG_Throughput');
             $rate = round($total_OK / ($total_OK + $total_NG) * 100);
 
             $pdf = PDF::loadView('pdf.MonthlyThroughput', [
@@ -65,6 +85,7 @@ class PDFController extends Controller
                 'total_ng' => $total_NG,
                 'rate' => $rate
             ]);
+
             return $pdf->download('MonthlyThroughputPDF.pdf');
         }
 
@@ -78,30 +99,51 @@ class PDFController extends Controller
         $throughputForOK = ThroughputForOK::filter($filters)->get();
         $throughputForNG = ThroughputForNG::filter($filters)->get();
 
-        if (!!count($throughputForOK) && !!count($throughputForNG)) {
-            $throughputs = $throughputForOK->map(function ($item) use ($throughputForNG) {
+        if (!!count($throughputForOK) || !!count($throughputForNG)) {
+            $OKthroughputs = $throughputForOK->map(function ($item) {
                 return [
-                        'product_id' => $item->PRODUCT_ID,
-                        'date' => $item->DATE,
-                        'OK_Throughput' => $item->NUMBER,
-                        'NG_Throughput' => $throughputForNG->filter(function ($e) use ($item) {
-                            return $e->DATE == $item->DATE;
-                        })->first()->NUMBER,
-                    ];
-                })->sortByDesc(function ($throughput, $key) {
-                    return Carbon::parse($throughput['date']);
+                    'product_id' => $item->PRODUCT_ID,
+                    'date' => $item->DATE,
+                    'OK_Throughput' => $item->NUMBER,
+                ];
             });
 
-            $total_OK = $throughputs->sum('OK_Throughput');
-            $total_NG = $throughputs->sum('NG_Throughput');
+            $NGthroughputs = $throughputForNG->map(function ($item) {
+                return [
+                    'product_id' => $item->PRODUCT_ID,
+                    'date' => $item->DATE,
+                    'NG_Throughput' => $item->NUMBER,
+                ];
+            });
+
+            $date_ok = $OKthroughputs->pluck('date');
+            $date_ng = $NGthroughputs->pluck('date');
+
+            $dates = $date_ok->merge($date_ng)->unique();
+
+            $throughputs = $dates->map(function ($date) use ($OKthroughputs, $NGthroughputs) {
+                return [
+                    'date' => $date,
+                    'OK_Throughput' => $OKthroughputs->filter(function ($OKthroughput) use ($date) {
+                        return $OKthroughput['date'] == $date;
+                    })->pluck('OK_Throughput'),
+                    'NG_Throughput' => $NGthroughputs->filter(function ($NGthroughput) use ($date) {
+                        return $NGthroughput['date'] == $date;
+                    })->pluck('NG_Throughput'),
+                ];
+            });
+
+            $total_OK = $OKthroughputs->sum('OK_Throughput');
+            $total_NG = $NGthroughputs->sum('NG_Throughput');
             $rate = round($total_OK / ($total_OK + $total_NG) * 100);
 
-            $pdf = PDF::loadView('pdf.CumulateThroughput', [
+            $pdf = PDF::loadView('pdf.MonthlyThroughput', [
                 'throughputs' => $throughputs,
                 'total_ok' => $total_OK,
                 'total_ng' => $total_NG,
                 'rate' => $rate
             ]);
+
             return $pdf->download('CumulateThroughputPDF.pdf');
         }
 

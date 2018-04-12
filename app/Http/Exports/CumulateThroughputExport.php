@@ -35,18 +35,38 @@ class CumulateThroughputExport implements FromCollection, ShouldQueue, WithHeadi
         $throughputForOK = ThroughputForOK::filter($this->filters)->get();
         $throughputForNG = ThroughputForNG::filter($this->filters)->get();
 
-        if (!!count($throughputForOK) && !!count($throughputForNG)) {
-            $throughputs = $throughputForOK->map(function ($item) use ($throughputForNG) {
+        if (!!count($throughputForOK) || !!count($throughputForNG)) {
+            $OKthroughputs = $throughputForOK->map(function ($item) {
                 return [
                     'product_id' => $item->PRODUCT_ID,
                     'date' => $item->DATE,
                     'OK_Throughput' => $item->NUMBER,
-                    'NG_Throughput' => $throughputForNG->filter(function ($e) use ($item) {
-                        return $e->DATE == $item->DATE;
-                    })->first()->NUMBER,
                 ];
-            })->sortByDesc(function ($throughput, $key) {
-                return Carbon::parse($throughput['date']);
+            });
+
+            $NGthroughputs = $throughputForNG->map(function ($item) {
+                return [
+                    'product_id' => $item->PRODUCT_ID,
+                    'date' => $item->DATE,
+                    'NG_Throughput' => $item->NUMBER,
+                ];
+            });
+
+            $date_ok = $OKthroughputs->pluck('date');
+            $date_ng = $NGthroughputs->pluck('date');
+
+            $dates = $date_ok->merge($date_ng)->unique();
+
+            $throughputs = $dates->map(function ($date) use ($OKthroughputs, $NGthroughputs) {
+                return [
+                    'date' => $date,
+                    'OK_Throughput' => $OKthroughputs->filter(function ($OKthroughput) use ($date) {
+                        return $OKthroughput['date'] == $date;
+                    })->pluck('OK_Throughput'),
+                    'NG_Throughput' => $NGthroughputs->filter(function ($NGthroughput) use ($date) {
+                        return $NGthroughput['date'] == $date;
+                    })->pluck('NG_Throughput'),
+                ];
             });
 
             return $throughputs;
@@ -62,9 +82,8 @@ class CumulateThroughputExport implements FromCollection, ShouldQueue, WithHeadi
     {
         return [
             $throughput['date'],
-            $throughput['OK_Throughput'],
-            $throughput['NG_Throughput'],
-            $throughput['product_id'],
+            $throughput['OK_Throughput']->first() ?? '0',
+            $throughput['NG_Throughput']->first() ?? '0',
         ];
     }
 
@@ -74,7 +93,6 @@ class CumulateThroughputExport implements FromCollection, ShouldQueue, WithHeadi
             '日期',
             '良品',
             '不量品',
-            '產品編號',
         ];
     }
 }
